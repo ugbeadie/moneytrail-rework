@@ -3,7 +3,6 @@
 import { auth } from "../src/app/lib/auth";
 import { headers } from "next/headers";
 
-// Define the shape of Better-Auth's expected error object
 type BetterAuthError = {
   body?: {
     code?: string;
@@ -20,26 +19,20 @@ export const signIn = async ({
 }) => {
   try {
     await auth.api.signInEmail({
-      body: {
-        email,
-        password,
-      },
+      body: { email, password },
     });
     console.log("Sign-in successful for email:", email);
   } catch (error: unknown) {
     console.error("Sign-in error:", error);
-
     const authError = error as BetterAuthError;
     const errorCode = authError.body?.code;
 
     if (errorCode === "INVALID_EMAIL_OR_PASSWORD") {
       throw new Error("Invalid email or password. Please try again.");
     }
-
     if (errorCode === "USER_NOT_FOUND") {
       throw new Error("No account found with this email. Please sign up.");
     }
-
     throw new Error(
       authError.body?.message ||
         (error instanceof Error
@@ -60,16 +53,11 @@ export const signUp = async ({
 }) => {
   try {
     await auth.api.signUpEmail({
-      body: {
-        email,
-        password,
-        name,
-      },
+      body: { email, password, name },
     });
     console.log("Sign-up successful for email:", email);
   } catch (error: unknown) {
     console.error("Sign-up error:", error);
-
     const authError = error as BetterAuthError;
 
     if (authError.body?.code === "USER_ALREADY_EXISTS") {
@@ -77,7 +65,6 @@ export const signUp = async ({
         "An account with this email already exists. Please sign in.",
       );
     }
-
     throw new Error(
       authError.body?.message ||
         (error instanceof Error
@@ -87,16 +74,28 @@ export const signUp = async ({
   }
 };
 
-// Added Server-Side Sign Out
 export const signOut = async () => {
   try {
     await auth.api.signOut({
-      // In Next.js App Router, server-side Better-Auth methods require headers
       headers: await headers(),
     });
     console.log("Sign-out successful");
   } catch (error: unknown) {
     console.error("Sign-out error:", error);
     throw new Error("Failed to sign out. Please try again.");
+  }
+};
+
+// 👇 ADDED: Server-Side function to get the current user
+export const getCurrentUser = async () => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    // Return just the user object, or null if no session exists
+    return session?.user || null;
+  } catch (error: unknown) {
+    console.error("Get session error:", error);
+    return null;
   }
 };

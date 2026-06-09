@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // 1. Hit Better-Auth's internal API endpoint to check the live session state.
   // This is completely Edge-safe and forwards the user's cookies securely.
   const response = await fetch(new URL("/api/auth/get-session", request.url), {

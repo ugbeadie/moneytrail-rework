@@ -128,7 +128,8 @@ function RegisterContent() {
           <button
             type="submit"
             disabled={pending || googlePending}
-            className="w-full h-11 rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground"
+            // Added border classes below
+            className="w-full h-11 rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground border border-gray-200 dark:border-gray-800"
           >
             {pending ? (
               <Loader2 className="animate-spin size-4" />
@@ -174,7 +175,7 @@ function RegisterContent() {
               />
             </svg>
           )}
-          {googlePending ? "Connecting..." : "Google"}
+          {googlePending ? "Connecting..." : "Sign up with Google"}
         </button>
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
