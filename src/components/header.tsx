@@ -11,7 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "../components/theme-toggle"; // Imported correctly!
+import { ThemeToggle } from "./theme-toggle"; // Imported correctly!
 
 const navItems = [
   {

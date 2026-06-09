@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "../app/components/theme-provider";
-import { Toaster } from "sonner"; // Assuming you added this earlier
-import { ThemeToggle } from "./components/theme-toggle";
+import { ThemeProvider } from "../components/theme-provider";
+import { Toaster } from "sonner";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Header } from "../components/header";
+import { CalendarProvider } from "@/contexts/CalendarContext";
+import { StatsProvider } from "@/contexts/StatsContext";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "MoneyTrail",
@@ -19,7 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", geist.variable)}
+    >
       <body>
         <ThemeProvider
           attribute="class"
@@ -27,10 +33,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <div className="fixed bottom-6 right-6 z-50">
-            <ThemeToggle />
-          </div>
+          <CalendarProvider>
+            <StatsProvider>{children}</StatsProvider>
+          </CalendarProvider>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>

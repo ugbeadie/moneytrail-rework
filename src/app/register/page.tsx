@@ -3,8 +3,8 @@
 import { useState, useActionState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signUp } from "../../../server/users";
-import { authClient } from "../lib/auth-client";
+import { signUp } from "@/server/users";
+import { authClient } from "@/lib/auth-client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,11 +12,9 @@ function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Controlled input states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [googlePending, setGooglePending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +35,7 @@ function RegisterContent() {
         await signUp({ name, email, password });
         toast.success("Account created successfully!");
 
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } catch (error) {
         toast.error(
@@ -55,7 +53,7 @@ function RegisterContent() {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: "/",
         errorCallbackURL: "/register",
       });
     } catch {

@@ -3,8 +3,8 @@
 import { useState, useActionState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "../../../server/users";
-import { authClient } from "../lib/auth-client";
+import { signIn } from "@/server/users";
+import { authClient } from "@/lib/auth-client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,10 +12,8 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Controlled input states to prevent form clearing on error
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [googlePending, setGooglePending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,11 +31,10 @@ function LoginContent() {
   const [state, formAction, pending] = useActionState(
     async (prevState: any, formData: FormData) => {
       try {
-        // Use our local state values instead of formData
         await signIn({ email, password });
         toast.success("Successfully signed in!");
 
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } catch (error) {
         toast.error(
@@ -55,7 +52,7 @@ function LoginContent() {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard",
+        callbackURL: "/",
         errorCallbackURL: "/login",
       });
     } catch (error) {

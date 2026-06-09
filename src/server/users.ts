@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "../src/app/lib/auth";
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 type BetterAuthError = {
@@ -86,13 +86,11 @@ export const signOut = async () => {
   }
 };
 
-// 👇 ADDED: Server-Side function to get the current user
 export const getCurrentUser = async () => {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
     });
-    // Return just the user object, or null if no session exists
     return session?.user || null;
   } catch (error: unknown) {
     console.error("Get session error:", error);

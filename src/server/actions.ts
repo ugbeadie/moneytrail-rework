@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { db } from "../src/app/db/drizzle";
+import { db } from "../app/db/drizzle";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Full name must be at least 2 characters"),
