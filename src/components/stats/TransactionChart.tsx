@@ -53,12 +53,14 @@ interface TooltipProps {
 
 export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [containerDimensions, setContainerDimensions] = useState({
     width: 0,
     height: 0,
   });
 
   useEffect(() => {
+    setIsMounted(true);
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -66,19 +68,24 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
   }, []);
 
   useEffect(() => {
+    if (!isMounted) return;
+
     const updateDimensions = () => {
       const container = document.querySelector(
-        ".chart-container"
+        ".chart-container",
       ) as HTMLElement | null;
       if (container) {
         const rect = container.getBoundingClientRect();
         setContainerDimensions({ width: rect.width, height: rect.height });
       }
     };
+
+    // Initial run to capture measurements right after mount
     updateDimensions();
+
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
+  }, [isMounted]);
 
   const chartData = data.map((item, index) => ({
     ...item,
@@ -127,10 +134,10 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
   const calculateExternalLabelPositions = (
     segments: ChartSegment[],
     actualCx: number,
-    actualCy: number
+    actualCy: number,
   ): LabelPosition[] => {
     const externalSegments = segments.filter(
-      (seg) => seg.percentage / 100 < settings.threshold
+      (seg) => seg.percentage / 100 < settings.threshold,
     );
 
     const positions: LabelPosition[] = [];
@@ -162,7 +169,7 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
             : Math.max(
                 baseY,
                 positions[positions.length - 1]?.labelY +
-                  settings.labelSpacing || baseY
+                  settings.labelSpacing || baseY,
               );
 
         const horizontalLength = isMobile ? 10 : 14;
@@ -188,7 +195,6 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
     ];
   };
 
-  // ✅ fixed typing for label
   const renderCustomLabel = ({
     cx,
     cy,
@@ -234,7 +240,7 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
     const externalPositions = calculateExternalLabelPositions(
       segmentData,
       cx,
-      cy
+      cy,
     );
 
     return (
@@ -282,7 +288,7 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
                   {categoryName}
                 </tspan>
                 <tspan x={pos.labelX} dy="12">{`${pos.percentage.toFixed(
-                  0
+                  0,
                 )}%`}</tspan>
               </text>
             </g>
@@ -291,6 +297,17 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
       </g>
     );
   };
+
+  // ✅ Fixes live site dropouts: Holds render until browser space can be read
+  if (!isMounted || containerDimensions.width === 0) {
+    return (
+      <div className="w-full h-64 md:h-96 chart-container flex items-center justify-center bg-muted/10 animate-pulse rounded-lg">
+        <span className="text-sm text-muted-foreground">
+          Loading analysis...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-64 md:h-96 chart-container">
@@ -307,10 +324,13 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
             dataKey="amount"
             stroke="transparent"
             strokeWidth={0}
-            onClick={(d) =>
-              "category" in d &&
-              onCategoryClick?.((d as unknown as CategoryStats).category)
-            }
+            // ✅ Fixes production TypeScript validation check
+            onClick={(d: any) => {
+              const category = d?.payload?.category || d?.category;
+              if (category) {
+                onCategoryClick?.(category);
+              }
+            }}
           >
             {chartData.map((entry, i) => (
               <Cell
