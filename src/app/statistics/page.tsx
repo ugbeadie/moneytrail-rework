@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
@@ -19,7 +20,6 @@ import {
 } from "@/lib/actions";
 import { months } from "@/lib/constants";
 import { Spinner } from "@/components/ui/spinner";
-import { TransactionChart } from "@/components/stats/TransactionChart";
 import { CategoryList } from "@/components/stats/CategoryList";
 import { CategoryDetail } from "@/components/stats/CategoryDetail";
 import { useStats } from "@/contexts/StatsContext";
@@ -27,6 +27,22 @@ import type { Transaction } from "@/types/transaction";
 import TransactionForm from "@/components/calendar/TransactionForm";
 import { format, startOfWeek, endOfWeek } from "date-fns";
 import { Header } from "@/components/header";
+
+// Dynamically import the TransactionChart with SSR disabled
+const TransactionChart = dynamic(
+  () =>
+    import("@/components/stats/TransactionChart").then(
+      (mod) => mod.TransactionChart,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-64 md:h-96 flex items-center justify-center bg-muted/10 animate-pulse rounded-lg">
+        <span className="text-sm text-muted-foreground">Loading chart...</span>
+      </div>
+    ),
+  },
+);
 
 const periodOptions = [
   { value: "weekly", label: "Weekly" },
