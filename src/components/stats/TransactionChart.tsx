@@ -309,7 +309,7 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
             strokeWidth={0}
             onClick={(d) =>
               "category" in d &&
-              onCategoryClick?.((d as CategoryStats).category)
+              onCategoryClick?.((d as unknown as CategoryStats).category)
             }
           >
             {chartData.map((entry, i) => (
