@@ -54,6 +54,12 @@ export function TransactionForm({
     return local.toISOString().split("T")[0];
   }
 
+  function getLocalDateISOFromDate(date: Date): string {
+    const local = new Date(date);
+    local.setMinutes(local.getMinutes() - local.getTimezoneOffset());
+    return local.toISOString().split("T")[0];
+  }
+
   // Get categories based on current type
   const categories = useMemo(() => {
     const cats = type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
@@ -107,7 +113,7 @@ export function TransactionForm({
           transaction.date instanceof Date
             ? transaction.date
             : new Date(transaction.date);
-        dateInput.value = dateObj.toISOString().split("T")[0];
+        dateInput.value = getLocalDateISOFromDate(dateObj);
       }
     }, 0);
   };

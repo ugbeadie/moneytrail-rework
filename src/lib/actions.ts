@@ -25,6 +25,15 @@ import {
 import { auth } from "./auth";
 import { headers } from "next/headers";
 
+function parseDateInput(dateStr: string): Date {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function toUtcDate(date: Date): Date {
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+}
+
 export async function addTransaction(
   formData: FormData,
 ): Promise<AddTransactionResult> {
@@ -53,8 +62,7 @@ export async function addTransaction(
       return { success: false, error: "Invalid amount" };
     }
 
-    const localDate = new Date(dateStr);
-    const date = localDate;
+    const date = parseDateInput(dateStr);
 
     await db.insert(transactions).values({
       userId,
@@ -103,8 +111,7 @@ export async function updateTransaction(
       return { success: false, error: "Invalid amount" };
     }
 
-    const localDate = new Date(dateStr);
-    const date = localDate;
+    const date = parseDateInput(dateStr);
 
     await db
       .update(transactions)
@@ -119,7 +126,7 @@ export async function updateTransaction(
       .where(
         and(
           eq(transactions.id, id),
-          eq(transactions.userId, userId), // Security: Only update if user owns it
+          eq(transactions.userId, userId), // Only update if user owns it
         ),
       );
 
@@ -146,7 +153,7 @@ export async function deleteTransaction(
     await db.delete(transactions).where(
       and(
         eq(transactions.id, id),
-        eq(transactions.userId, userId), // Security: Only delete if user owns it
+        eq(transactions.userId, userId), // Only delete if user owns it
       ),
     );
 
@@ -197,28 +204,8 @@ export async function getTransactionsByMonth(
     const localStartDate = new Date(year, month, 1);
     const localEndDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
 
-    const utcStartDate = new Date(
-      Date.UTC(
-        localStartDate.getFullYear(),
-        localStartDate.getMonth(),
-        localStartDate.getDate(),
-        0,
-        0,
-        0,
-        0,
-      ),
-    );
-    const utcEndDate = new Date(
-      Date.UTC(
-        localEndDate.getFullYear(),
-        localEndDate.getMonth(),
-        localEndDate.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    );
+    const utcStartDate = toUtcDate(localStartDate);
+    const utcEndDate = toUtcDate(localEndDate);
 
     const rawTransactions = await db
       .select()
@@ -289,28 +276,8 @@ export async function getTransactionSummaryByMonth(
     const localStartDate = new Date(year, month, 1);
     const localEndDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
 
-    const utcStartDate = new Date(
-      Date.UTC(
-        localStartDate.getFullYear(),
-        localStartDate.getMonth(),
-        localStartDate.getDate(),
-        0,
-        0,
-        0,
-        0,
-      ),
-    );
-    const utcEndDate = new Date(
-      Date.UTC(
-        localEndDate.getFullYear(),
-        localEndDate.getMonth(),
-        localEndDate.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    );
+    const utcStartDate = toUtcDate(localStartDate);
+    const utcEndDate = toUtcDate(localEndDate);
 
     const monthTransactions = await db
       .select()
@@ -341,10 +308,6 @@ export async function getTransactionSummaryByMonth(
     return { totalIncome: 0, totalExpenses: 0, balance: 0 };
   }
 }
-
-// ----------------------------------------------------------------------
-// STATS ACTIONS
-// ----------------------------------------------------------------------
 
 export interface CategoryStats {
   category: string;
@@ -437,28 +400,8 @@ export async function getStatsData(
         break;
     }
 
-    const utcStartDate = new Date(
-      Date.UTC(
-        startDate.getFullYear(),
-        startDate.getMonth(),
-        startDate.getDate(),
-        0,
-        0,
-        0,
-        0,
-      ),
-    );
-    const utcEndDate = new Date(
-      Date.UTC(
-        endDate.getFullYear(),
-        endDate.getMonth(),
-        endDate.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    );
+    const utcStartDate = toUtcDate(startDate);
+    const utcEndDate = toUtcDate(endDate);
 
     const rawTransactions = await db
       .select()
