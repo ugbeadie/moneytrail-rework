@@ -1,5 +1,3 @@
-// app/api/transactions/category/route.ts
-
 import { NextResponse } from "next/server";
 import { getTransactionsCategory } from "@/lib/actions";
 

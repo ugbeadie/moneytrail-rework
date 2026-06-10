@@ -64,7 +64,7 @@ export function CategoryDetail({
       currentYear,
       currentMonth
         ? new Date(`${currentMonth} 1`).getMonth()
-        : new Date().getMonth()
+        : new Date().getMonth(),
     );
   });
 
@@ -118,14 +118,14 @@ export function CategoryDetail({
       setCurrentDate(
         direction === "next"
           ? addMonths(currentDate, 1)
-          : subMonths(currentDate, 1)
+          : subMonths(currentDate, 1),
       );
     } else if (period === "annually") {
       setCurrentDate(
         new Date(
           currentDate.getFullYear() + (direction === "next" ? 1 : -1),
-          currentDate.getMonth()
-        )
+          currentDate.getMonth(),
+        ),
       );
     } else if (period === "weekly") {
       const newWeek = new Date(currentDate);
@@ -185,7 +185,7 @@ export function CategoryDetail({
       const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
       return `${format(weekStart, "MMM dd")} - ${format(
         weekEnd,
-        "MMM dd, yyyy"
+        "MMM dd, yyyy",
       )}`;
     } else if (period === "monthly") {
       return format(currentDate, "MMM yyyy");
@@ -209,7 +209,7 @@ export function CategoryDetail({
     Object.keys(grouped).forEach((date) => {
       grouped[date].sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
     });
 
@@ -218,7 +218,7 @@ export function CategoryDetail({
 
   const groupedTransactions = groupTransactionsByDate(transactions);
   const sortedDates = Object.keys(groupedTransactions).sort(
-    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    (a, b) => new Date(b).getTime() - new Date(a).getTime(),
   );
 
   const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
@@ -297,8 +297,8 @@ export function CategoryDetail({
                     <XAxis dataKey="period" />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => [
-                        `₦${value.toLocaleString()}`,
+                      formatter={(value) => [
+                        `₦${(value as number).toLocaleString()}`,
                         "Amount",
                       ]}
                       labelFormatter={(label) => `Period: ${label}`}

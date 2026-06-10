@@ -324,6 +324,7 @@ function StatsContent({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Chart */}
       <Card className="border-none shadow-none bg-transparent p-4">
+        <Header />
         <CardHeader className="px-0">
           <h3
             className={`text-lg font-semibold capitalize ${

@@ -598,18 +598,40 @@ export async function getTransactionsCategory(
         amount,
       }));
     } else if (period === "monthly") {
+      const chartStart = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 5,
+        1,
+      );
+
+      const rawChartTransactions = await db
+        .select()
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.userId, userId),
+            eq(transactions.category, category),
+            eq(transactions.type, type),
+            gte(transactions.date, chartStart),
+            lte(transactions.date, endDate),
+          ),
+        )
+        .orderBy(asc(transactions.date));
+
+      const chartTransactions = rawChartTransactions.map((t) => ({
+        ...t,
+        amount: Number(t.amount),
+        date: new Date(t.date),
+      }));
+
       const months = eachMonthOfInterval({
-        start: new Date(
-          currentDate.getFullYear(),
-          currentDate.getMonth() - 5,
-          1,
-        ),
+        start: chartStart,
         end: currentDate,
       });
       const monthMap = new Map<string, number>();
       months.forEach((m) => monthMap.set(format(m, "MMM"), 0));
 
-      mappedTransactions.forEach((t) => {
+      chartTransactions.forEach((t) => {
         const key = format(new Date(t.date), "MMM");
         monthMap.set(key, (monthMap.get(key) || 0) + t.amount);
       });
@@ -619,14 +641,36 @@ export async function getTransactionsCategory(
         amount,
       }));
     } else if (period === "annually") {
+      const chartStart = new Date(currentDate.getFullYear() - 4, 0, 1);
+
+      const rawChartTransactions = await db
+        .select()
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.userId, userId),
+            eq(transactions.category, category),
+            eq(transactions.type, type),
+            gte(transactions.date, chartStart),
+            lte(transactions.date, endDate),
+          ),
+        )
+        .orderBy(asc(transactions.date));
+
+      const chartTransactions = rawChartTransactions.map((t) => ({
+        ...t,
+        amount: Number(t.amount),
+        date: new Date(t.date),
+      }));
+
       const years = eachYearOfInterval({
-        start: new Date(currentDate.getFullYear() - 4, 0, 1),
+        start: chartStart,
         end: currentDate,
       });
       const yearMap = new Map<string, number>();
       years.forEach((y) => yearMap.set(format(y, "yyyy"), 0));
 
-      mappedTransactions.forEach((t) => {
+      chartTransactions.forEach((t) => {
         const key = format(new Date(t.date), "yyyy");
         yearMap.set(key, (yearMap.get(key) || 0) + t.amount);
       });
