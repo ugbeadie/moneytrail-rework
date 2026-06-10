@@ -57,7 +57,7 @@ export function CategoryDetail({
     useState<Transaction | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  // 🔥 FIX 1: Initialize dates to the 15th of the month at 12:00 PM (noon)
+  // Initialize dates to the 15th of the month at 12:00 PM (noon)
   const [currentDate, setCurrentDate] = useState(() => {
     if (period === "weekly" && currentWeek) {
       const safeWeek = new Date(currentWeek);
@@ -69,13 +69,13 @@ export function CategoryDetail({
       currentMonth
         ? new Date(`${currentMonth} 1`).getMonth()
         : new Date().getMonth(),
-      15, // Center in the middle of the month
-      12, // Anchor to noon to prevent timezone midnight jumps
+      15,
+      12,
     );
   });
 
   async function fetchCategoryData() {
-    // 🔥 FIX 2: Ensure the date sent to the server is firmly anchored to noon
+    // Ensure the date sent to the server is firmly anchored to noon
     const safeDate = new Date(currentDate);
     safeDate.setHours(12, 0, 0, 0);
 
@@ -130,7 +130,7 @@ export function CategoryDetail({
           : subMonths(currentDate, 1),
       );
     } else if (period === "annually") {
-      // 🔥 FIX 3: Keep the annual navigation anchored to the 15th at noon
+      // Keep the annual navigation anchored to the 15th at noon
       setCurrentDate(
         new Date(
           currentDate.getFullYear() + (direction === "next" ? 1 : -1),
