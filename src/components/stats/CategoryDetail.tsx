@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { Transaction } from "@/types/transaction";
-import { deleteTransaction } from "@/lib/actions"; // keep
+import { deleteTransaction } from "@/lib/actions";
 import { Spinner } from "@/components/ui/spinner";
 import { TransactionGroup } from "@/components/home/TransactionGroup";
 import TransactionForm from "@/components/calendar/TransactionForm";
@@ -56,20 +56,29 @@ export function CategoryDetail({
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  // 🔥 FIX 1: Initialize dates to the 15th of the month at 12:00 PM (noon)
   const [currentDate, setCurrentDate] = useState(() => {
     if (period === "weekly" && currentWeek) {
-      return currentWeek;
+      const safeWeek = new Date(currentWeek);
+      safeWeek.setHours(12, 0, 0, 0);
+      return safeWeek;
     }
     return new Date(
       currentYear,
       currentMonth
         ? new Date(`${currentMonth} 1`).getMonth()
         : new Date().getMonth(),
+      15, // Center in the middle of the month
+      12, // Anchor to noon to prevent timezone midnight jumps
     );
   });
 
-  // 🔥 NEW UNIFIED FETCHER — same output as getTransactionsCategory()
   async function fetchCategoryData() {
+    // 🔥 FIX 2: Ensure the date sent to the server is firmly anchored to noon
+    const safeDate = new Date(currentDate);
+    safeDate.setHours(12, 0, 0, 0);
+
     const res = await fetch("/api/transactions/category", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -77,13 +86,13 @@ export function CategoryDetail({
         category,
         type,
         period,
-        currentDate,
+        currentDate: safeDate, // Send the buffered date
       }),
     });
 
     const data = await res.json();
 
-    // 🔥 FIX: restore Date objects
+    // Restore Date objects
     data.transactions = data.transactions.map((t: any) => ({
       ...t,
       date: new Date(t.date),
@@ -99,7 +108,6 @@ export function CategoryDetail({
     const loadData = async () => {
       setLoading(true);
       try {
-        // replaced server action with API fetch
         const data = await fetchCategoryData();
         setTransactions(data.transactions);
         setChartData(data.chartData);
@@ -115,21 +123,26 @@ export function CategoryDetail({
 
   const navigateDate = (direction: "prev" | "next") => {
     if (period === "monthly") {
+      // date-fns addMonths/subMonths preserves the day and time (15th at 12:00 PM)
       setCurrentDate(
         direction === "next"
           ? addMonths(currentDate, 1)
           : subMonths(currentDate, 1),
       );
     } else if (period === "annually") {
+      // 🔥 FIX 3: Keep the annual navigation anchored to the 15th at noon
       setCurrentDate(
         new Date(
           currentDate.getFullYear() + (direction === "next" ? 1 : -1),
           currentDate.getMonth(),
+          15,
+          12,
         ),
       );
     } else if (period === "weekly") {
       const newWeek = new Date(currentDate);
       newWeek.setDate(newWeek.getDate() + (direction === "next" ? 7 : -7));
+      newWeek.setHours(12, 0, 0, 0); // Keep anchored
       setCurrentDate(newWeek);
     }
   };
@@ -139,7 +152,6 @@ export function CategoryDetail({
       const result = await deleteTransaction(id);
 
       if (result.success) {
-        // Re-fetch using API
         const data = await fetchCategoryData();
         setTransactions(data.transactions);
         setChartData(data.chartData);
@@ -166,7 +178,6 @@ export function CategoryDetail({
     setShowForm(false);
     setEditingTransaction(null);
 
-    // Re-fetch using API
     const data = await fetchCategoryData();
     setTransactions(data.transactions);
     setChartData(data.chartData);
