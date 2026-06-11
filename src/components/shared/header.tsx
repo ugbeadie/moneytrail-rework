@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useTransition } from "react";
 import Link from "next/link";
@@ -13,17 +14,16 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { signOut } from "@/server/users"; // Adjust path to your auth utilities file
+import { ThemeToggle } from "../theme-toggle";
+import { signOut } from "@/server/users";
 import { toast } from "sonner";
 
-// --- Custom User Menu Dropdown ---
 function UserMenu({ email }: { email?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  // Handle clicking outside to close the modal
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -55,7 +55,7 @@ function UserMenu({ email }: { email?: string }) {
       {/* Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border-2 border-transparent hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+        className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border-2 border-transparent hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
       >
         <User className="w-4 h-4 text-muted-foreground" />
       </button>
@@ -67,10 +67,17 @@ function UserMenu({ email }: { email?: string }) {
             {email || "My Account"}
           </div>
 
+          <div className="flex items-center justify-between px-2 py-1.5">
+            <span className="text-sm text-muted-foreground">Theme</span>
+            <ThemeToggle />
+          </div>
+
+          <hr className="border-border my-1" />
+
           <button
             onClick={handleSignOut}
             disabled={isPending}
-            className="flex items-center gap-2 px-2 py-2 mt-1 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-md transition-colors disabled:opacity-50 text-left w-full cursor-pointer"
+            className="flex items-center gap-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/50 rounded-md transition-colors disabled:opacity-50 text-left w-full cursor-pointer"
           >
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -85,7 +92,6 @@ function UserMenu({ email }: { email?: string }) {
   );
 }
 
-// --- Main Header Component ---
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/calendar", label: "Calendar", icon: Calendar },
@@ -96,6 +102,7 @@ export function Header({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
   const [loadingPath, setLoadingPath] = useState<string | null>(null);
 
+  // Reset loading when route changes
   useEffect(() => {
     if (loadingPath === pathname) {
       setLoadingPath(null);
@@ -104,20 +111,20 @@ export function Header({ userEmail }: { userEmail?: string }) {
 
   return (
     <>
-      {/* Desktop Navigation */}
+      {/* Desktop Navigation - Top Fixed */}
       <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
         <div className="flex items-center justify-between max-w-6xl mx-auto w-full px-6 py-3">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 fill-primary-foreground"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.5 10.84L6.5 8.84L2 13.34L3.5 14.84L6.5 11.84L10.5 13.84L17.83 6.5L20.5 9.17L22 7.67L21 9Z" />
-              </svg>
-            </div>
+            <Link href="/" className="block w-8 h-8 relative">
+              <Image
+                src="/expenses.png"
+                alt="Expenses logo"
+                fill
+                className="object-contain"
+                sizes="32px"
+              />
+            </Link>
           </div>
 
           {/* Navigation Items */}
@@ -133,7 +140,9 @@ export function Header({ userEmail }: { userEmail?: string }) {
                     variant={isActive ? "default" : "outline"}
                     className="flex items-center justify-center gap-2 w-full py-2 text-sm font-medium transition-colors cursor-pointer"
                     onClick={() => {
-                      if (pathname !== item.href) setLoadingPath(item.href);
+                      if (pathname !== item.href) {
+                        setLoadingPath(item.href);
+                      }
                     }}
                   >
                     {isLoading ? (
@@ -155,21 +164,19 @@ export function Header({ userEmail }: { userEmail?: string }) {
         </div>
       </nav>
 
-      {/* Mobile Top Bar */}
+      {/* Mobile Top Bar - Logo and User Menu Fixed */}
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40">
         <div className="flex items-center justify-between px-4 py-3">
           {/* Logo */}
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-5 h-5 fill-primary-foreground"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L13.5 2.5L16.17 5.17L10.5 10.84L6.5 8.84L2 13.34L3.5 14.84L6.5 11.84L10.5 13.84L17.83 6.5L20.5 9.17L22 7.67L21 9Z" />
-              </svg>
-            </div>
-          </div>
+          <Link href="/" className="block w-8 h-8 relative">
+            <Image
+              src="/expenses.png"
+              alt="Expenses logo"
+              fill
+              className="object-contain"
+              sizes="32px"
+            />
+          </Link>
 
           {/* User Avatar Menu */}
           <div className="flex items-center">
@@ -178,7 +185,7 @@ export function Header({ userEmail }: { userEmail?: string }) {
         </div>
       </nav>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - Fixed */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-t border-border/40">
         <div className="flex items-center justify-around py-2">
           {navItems.map((item) => {
@@ -197,7 +204,9 @@ export function Header({ userEmail }: { userEmail?: string }) {
                       : "text-muted-foreground hover:text-foreground",
                   )}
                   onClick={() => {
-                    if (pathname !== item.href) setLoadingPath(item.href);
+                    if (pathname !== item.href) {
+                      setLoadingPath(item.href);
+                    }
                   }}
                 >
                   {isLoading ? (
@@ -215,6 +224,7 @@ export function Header({ userEmail }: { userEmail?: string }) {
         </div>
       </nav>
 
+      {/* Spacer for fixed headers */}
       <div className="h-[60px]" />
     </>
   );
