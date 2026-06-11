@@ -190,7 +190,7 @@ export default function TransactionCalendar({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-y-auto px-0">
+      <CardContent className="flex-1 overflow-y-auto px-0 thin-scrollbar">
         <div ref={containerRef} className="w-full h-full cursor-pointer">
           {loading ? (
             <div className="flex flex-col h-[500px] w-full gap-2 p-2">
