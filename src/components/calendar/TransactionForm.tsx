@@ -65,16 +65,22 @@ export default function TransactionForm({
     populateFormFields(editingTransaction);
   }, [editingTransaction]);
 
-  // Helper functions
   const populateFormFields = (transaction: Transaction) => {
     const form = formRef.current;
     if (!form) return;
-    (form.amount as HTMLInputElement).value = transaction.amount.toString();
-    (form.description as HTMLTextAreaElement).value =
-      transaction.description || "";
-    (form.imageUrl as HTMLInputElement).value = transaction.imageUrl || "";
 
-    if (transaction.date) {
+    if (form.amount) {
+      (form.amount as HTMLInputElement).value = transaction.amount.toString();
+    }
+    if (form.description) {
+      (form.description as HTMLTextAreaElement).value =
+        transaction.description || "";
+    }
+    if (form.imageUrl) {
+      (form.imageUrl as HTMLInputElement).value = transaction.imageUrl || "";
+    }
+
+    if (transaction.date && form.date) {
       const dateObj =
         transaction.date instanceof Date
           ? transaction.date
@@ -179,9 +185,8 @@ export default function TransactionForm({
   };
 
   return (
-    <div className="w-full bg-transparent p-2 space-y-6">
-      {/* Form Header */}
-      <div className="space-y-1">
+    <div className="w-full bg-transparent p-2 space-y-6 overflow-hidden ">
+      <div className="space-y-1 ">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold tracking-tight text-card-foreground">
             {isEditing ? "Edit Transaction" : "Add Transaction"}
@@ -204,9 +209,7 @@ export default function TransactionForm({
         </p>
       </div>
 
-      {/* Form Body */}
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-        {/* Transaction Type */}
         <div className="flex gap-2">
           <Button
             type="button"
@@ -228,7 +231,6 @@ export default function TransactionForm({
           </Button>
         </div>
 
-        {/* Amount */}
         <div className="space-y-2">
           <Label htmlFor="amount">Amount</Label>
           <Input
@@ -242,7 +244,6 @@ export default function TransactionForm({
           />
         </div>
 
-        {/* Category */}
         <div className="space-y-2">
           <Label htmlFor="category">Category</Label>
           <Select
@@ -266,7 +267,6 @@ export default function TransactionForm({
             </SelectContent>
           </Select>
 
-          {/* Type change warning */}
           {showTypeChangeWarning && !category && (
             <div className="text-sm text-amber-700 bg-amber-50 dark:bg-amber-950 dark:text-amber-300 p-3 rounded-md border border-amber-200 dark:border-amber-800">
               <div className="flex items-center gap-2">
@@ -280,7 +280,6 @@ export default function TransactionForm({
           )}
         </div>
 
-        {/* Date */}
         <div className="space-y-2">
           <Label htmlFor="date">Date</Label>
           <Input
@@ -292,7 +291,6 @@ export default function TransactionForm({
           />
         </div>
 
-        {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description">Description (Optional)</Label>
           <Textarea
@@ -303,7 +301,6 @@ export default function TransactionForm({
           />
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="text-sm text-red-700 bg-red-50 dark:bg-red-950 dark:text-red-300 p-3 rounded-md border border-red-200 dark:border-red-800">
             <div className="flex items-center gap-2">
@@ -313,7 +310,6 @@ export default function TransactionForm({
           </div>
         )}
 
-        {/* Action Buttons */}
         <div className="flex gap-2 pt-2">
           <Button
             type="submit"

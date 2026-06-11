@@ -14,9 +14,9 @@ export default async function HomePage() {
       <Header userEmail={user?.email} />
 
       <div className="max-h-screen bg-background flex flex-col">
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col pt-6">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col ">
           <MonthPickerTab />
-          <div className="w-full flex-1 mt-4">
+          <div className="w-full flex-1 ">
             <TransactionManager />
           </div>
         </main>

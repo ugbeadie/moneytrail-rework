@@ -18,7 +18,7 @@ import {
   type CategoryStats,
 } from "@/lib/actions";
 import { months } from "@/lib/constants";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionChart } from "@/components/stats/TransactionChart";
 import { CategoryList } from "@/components/stats/CategoryList";
 import { CategoryDetail } from "@/components/stats/CategoryDetail";
@@ -181,7 +181,6 @@ export default function StatsPage() {
     <>
       <div className="container mx-auto max-w-6xl px-4 mb-12 md:mb-6">
         <Header />
-        <hr className="border-muted" />
 
         <div className="space-y-6 mt-2">
           {/* Header with filters */}
@@ -302,8 +301,37 @@ function StatsContent({
 }: StatsContentProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Spinner />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Chart Skeleton */}
+        <Card className="border-none shadow-none bg-transparent p-4">
+          <CardHeader className="px-0">
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="px-0 flex items-center justify-center h-64">
+            <Skeleton className="h-full w-full rounded-xl" />
+          </CardContent>
+        </Card>
+
+        {/* Category List Skeleton */}
+        <Card>
+          <CardHeader className="px-2 md:px-6">
+            <Skeleton className="h-6 w-40" />
+          </CardHeader>
+          <CardContent className="px-2 md:px-6 space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between p-2">
+                <div className="flex items-center gap-3 flex-1">
+                  <Skeleton className="w-8 h-6 rounded" />
+                  <Skeleton className="h-5 w-1/3" />
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -321,10 +349,10 @@ function StatsContent({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-screen">
       {/* Chart */}
       <Card className="border-none shadow-none bg-transparent p-4">
-        <Header />
+        {/* <Header /> */}
         <CardHeader className="px-0">
           <h3
             className={`text-lg font-semibold capitalize ${

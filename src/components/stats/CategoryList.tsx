@@ -7,7 +7,6 @@ interface CategoryListProps {
   onCategoryClick?: (category: string) => void;
 }
 
-// Same color palette as the chart
 const COLORS = [
   "#ef4444", // red
   "#f97316", // orange
@@ -40,7 +39,7 @@ export function CategoryList({ data, onCategoryClick }: CategoryListProps) {
                 {Math.round(item.percentage)}%
               </div>
 
-              {/* Category with emoji */}
+              {/* Category */}
               <div className="flex items-center gap-2 min-w-0">
                 <span className="font-medium truncate">{item.category}</span>
               </div>

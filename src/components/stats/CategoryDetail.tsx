@@ -15,7 +15,7 @@ import {
 } from "recharts";
 import type { Transaction } from "@/types/transaction";
 import { deleteTransaction } from "@/lib/actions";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TransactionGroup } from "@/components/home/TransactionGroup";
 import TransactionForm from "@/components/calendar/TransactionForm";
 import { format, addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
@@ -57,7 +57,6 @@ export function CategoryDetail({
     useState<Transaction | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Initialize dates to the 15th of the month at 12:00 PM (noon)
   const [currentDate, setCurrentDate] = useState(() => {
     if (period === "weekly" && currentWeek) {
       const safeWeek = new Date(currentWeek);
@@ -75,7 +74,6 @@ export function CategoryDetail({
   });
 
   async function fetchCategoryData() {
-    // Ensure the date sent to the server is firmly anchored to noon
     const safeDate = new Date(currentDate);
     safeDate.setHours(12, 0, 0, 0);
 
@@ -86,13 +84,12 @@ export function CategoryDetail({
         category,
         type,
         period,
-        currentDate: safeDate, // Send the buffered date
+        currentDate: safeDate,
       }),
     });
 
     const data = await res.json();
 
-    // Restore Date objects
     data.transactions = data.transactions.map((t: any) => ({
       ...t,
       date: new Date(t.date),
@@ -103,7 +100,6 @@ export function CategoryDetail({
     return data;
   }
 
-  // Fetch category data when inputs change
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -123,14 +119,12 @@ export function CategoryDetail({
 
   const navigateDate = (direction: "prev" | "next") => {
     if (period === "monthly") {
-      // date-fns addMonths/subMonths preserves the day and time (15th at 12:00 PM)
       setCurrentDate(
         direction === "next"
           ? addMonths(currentDate, 1)
           : subMonths(currentDate, 1),
       );
     } else if (period === "annually") {
-      // Keep the annual navigation anchored to the 15th at noon
       setCurrentDate(
         new Date(
           currentDate.getFullYear() + (direction === "next" ? 1 : -1),
@@ -142,7 +136,7 @@ export function CategoryDetail({
     } else if (period === "weekly") {
       const newWeek = new Date(currentDate);
       newWeek.setDate(newWeek.getDate() + (direction === "next" ? 7 : -7));
-      newWeek.setHours(12, 0, 0, 0); // Keep anchored
+      newWeek.setHours(12, 0, 0, 0);
       setCurrentDate(newWeek);
     }
   };
@@ -238,10 +232,47 @@ export function CategoryDetail({
     return (
       <div
         className={`${
-          isMobile ? "fixed inset-0 bg-background z-50" : "w-full"
-        } flex items-center justify-center`}
+          isMobile
+            ? "fixed inset-0 bg-background z-50 overflow-y-auto"
+            : "w-full"
+        }`}
       >
-        <Spinner />
+        <div className="space-y-4 mx-auto max-w-6xl px-4 py-2">
+          <hr className="border-muted" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-9 w-20" />
+              <Skeleton className="h-7 w-36" />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-4">
+            <Skeleton className="h-8 w-40" />
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-5">
+            <Card className="w-full h-[400px] p-4">
+              <CardHeader className="px-0 pt-0">
+                <Skeleton className="h-6 w-36" />
+              </CardHeader>
+              <CardContent className="px-0 h-64">
+                <Skeleton className="h-full w-full rounded-xl" />
+              </CardContent>
+            </Card>
+
+            <Card className="w-full h-[400px] p-4 space-y-4">
+              <CardHeader className="px-0 pt-0 space-y-2">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-48" />
+              </CardHeader>
+              <CardContent className="px-0 space-y-3">
+                <Skeleton className="h-14 w-full rounded-lg" />
+                <Skeleton className="h-14 w-full rounded-lg" />
+                <Skeleton className="h-14 w-full rounded-lg" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     );
   }
@@ -294,7 +325,7 @@ export function CategoryDetail({
           </Button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-5 min-h-[70vh]">
+        <div className="flex flex-col md:flex-row gap-5 max-h-screen">
           {/* Chart */}
           <Card className="w-full max-h-[70vh]">
             <CardHeader>
@@ -328,7 +359,7 @@ export function CategoryDetail({
           </Card>
 
           {/* Transaction List / Form */}
-          <Card className="w-full max-h-[70vh] overflow-auto relative">
+          <Card className="w-full max-h-screen relative">
             {!showForm || isMobile ? (
               <>
                 <CardHeader>

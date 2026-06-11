@@ -4,10 +4,12 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import type { CategoryStats } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import type { PieLabelRenderProps } from "recharts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface StatsChartProps {
   data: CategoryStats[];
   onCategoryClick?: (category: string) => void;
+  loading?: boolean; // Optional prop if you want to explicitly control loading from parent
 }
 
 const COLORS = [
@@ -51,7 +53,11 @@ interface TooltipProps {
   }[];
 }
 
-export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
+export function TransactionChart({
+  data,
+  onCategoryClick,
+  loading,
+}: StatsChartProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [containerDimensions, setContainerDimensions] = useState({
     width: 0,
@@ -75,10 +81,32 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
         setContainerDimensions({ width: rect.width, height: rect.height });
       }
     };
-    updateDimensions();
+    // Small timeout ensures the DOM has painted before measurement
+    const timer = setTimeout(updateDimensions, 0);
     window.addEventListener("resize", updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateDimensions);
+    };
   }, []);
+
+  // Show a beautifully centered circular skeleton if loading or dimensions aren't ready
+  if (
+    loading ||
+    containerDimensions.width === 0 ||
+    containerDimensions.height === 0
+  ) {
+    return (
+      <div className="w-full h-64 md:h-96 flex items-center justify-center chart-container">
+        <div className="relative flex items-center justify-center">
+          {/* Outer ring skeleton mimicking a pie/donut perimeter */}
+          <Skeleton className="h-40 w-40 md:h-56 md:w-56 rounded-full animate-pulse opacity-40" />
+          {/* Inner core mask to simulate chart depth structure */}
+          <div className="absolute h-24 w-24 md:h-36 md:w-36 bg-background rounded-full" />
+        </div>
+      </div>
+    );
+  }
 
   const chartData = data.map((item, index) => ({
     ...item,
@@ -115,7 +143,7 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
 
   const CustomTooltip = ({ active, payload }: TooltipProps) =>
     active && payload && payload.length ? (
-      <div className="bg-background border rounded-lg p-3 shadow-lg">
+      <div className="bg-background border rounded-lg p-3 shadow-lg z-50">
         <p className="font-medium">{payload[0].payload.displayCategory}</p>
         <p className="text-sm text-muted-foreground">
           ₦{payload[0].payload.amount.toLocaleString()} (
@@ -161,8 +189,8 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
             ? baseY
             : Math.max(
                 baseY,
-                positions[positions.length - 1]?.labelY +
-                  settings.labelSpacing || baseY,
+                (positions[positions.length - 1]?.labelY || baseY) +
+                  settings.labelSpacing,
               );
 
         const horizontalLength = isMobile ? 10 : 14;
@@ -188,7 +216,6 @@ export function TransactionChart({ data, onCategoryClick }: StatsChartProps) {
     ];
   };
 
-  // ✅ fixed typing for label
   const renderCustomLabel = ({
     cx,
     cy,
