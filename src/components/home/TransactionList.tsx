@@ -147,7 +147,7 @@ export function TransactionList({ onEdit, onRefresh }: TransactionListProps) {
   const totalExpenses = transactions.filter((t) => t.type === "expense").length;
 
   return (
-    <div className=" flex flex-col md:max-h-[70vh]">
+    <div className="flex flex-col h-full min-h-0">
       <div className="flex-shrink-0">
         <h2 className="text-xl font-semibold mb-2">Recent Transactions</h2>
         <p className="text-muted-foreground text-sm mb-6">
@@ -162,7 +162,8 @@ export function TransactionList({ onEdit, onRefresh }: TransactionListProps) {
           in {selectedMonth}
         </p>
       </div>
-      <div className="flex-1 overflow-y-auto overflow-x-hidden thin-scrollbar">
+
+      <div className="flex-1 overflow-y-auto overflow-x-hidden thin-scrollbar pr-2">
         <div className="space-y-0">
           {sortedDates.map((date) => (
             <TransactionGroup

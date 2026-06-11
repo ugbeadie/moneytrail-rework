@@ -202,7 +202,7 @@ export function TransactionForm({
       if (!isEditing) {
         resetFormState();
       }
-      onTransactionSaved?.(); // This calls handleTransactionSaved which uses handleRefresh
+      onTransactionSaved?.();
     } catch (error) {
       console.error("Error submitting transaction:", error);
       setError("An unexpected error occurred. Please try again.");
@@ -217,7 +217,7 @@ export function TransactionForm({
   };
 
   return (
-    <Card className="border-none shadow-none p-4 bg-transparent md:min-h-full">
+    <Card className="border-none shadow-none p-4 bg-transparent">
       <CardHeader className="px-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold">

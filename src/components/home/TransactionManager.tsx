@@ -50,13 +50,11 @@ export function TransactionManager() {
   }, [showMobileForm]);
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col flex-1 min-h-0">
       <SummaryCards key={`summary-${refreshKey}`} />
 
-      {/* Desktop Layout */}
-      <div className="hidden md:grid md:grid-cols-2 md:gap-8 md:mt-6 md:h-[60vh]">
-        {/* Transaction List */}
-        <div>
+      <div className="hidden md:grid md:grid-cols-2 md:gap-8 md:mt-6 flex-1 min-h-0 pb-6">
+        <div className="flex flex-col min-h-0">
           <TransactionList
             key={refreshKey}
             onEdit={handleEdit}
@@ -64,8 +62,7 @@ export function TransactionManager() {
           />
         </div>
 
-        {/* Transaction Form */}
-        <div className="md:h-[60vh]">
+        <div className="overflow-y-auto min-h-0 bg-card rounded-xl border shadow-sm h-fit">
           <TransactionForm
             editingTransaction={editingTransaction}
             onTransactionSaved={handleTransactionSaved}
@@ -75,15 +72,13 @@ export function TransactionManager() {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden mt-8 mb-5">
-        {/* Transaction List - Always visible on mobile */}
+      <div className="md:hidden mt-8 mb-5 overflow-y-auto">
         <TransactionList
           key={refreshKey}
           onEdit={handleEdit}
           onRefresh={handleRefresh}
         />
 
-        {/* Floating Plus Button */}
         {!showMobileForm && (
           <Button
             onClick={handleFloatingButtonClick}
@@ -94,7 +89,6 @@ export function TransactionManager() {
           </Button>
         )}
 
-        {/* Mobile Form Overlay */}
         {showMobileForm && (
           <div className="fixed inset-0 bg-background z-50 overflow-y-auto">
             <div className="p-4">

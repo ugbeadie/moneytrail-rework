@@ -2,21 +2,19 @@ import { Header } from "@/components/shared/header";
 import { MonthPickerTab } from "@/components/home/MonthPickerTab";
 import { TransactionManager } from "@/components/home/TransactionManager";
 import { CalendarProvider } from "@/contexts/CalendarContext";
-import { getCurrentUser } from "@/server/users"; // Adjust path to your auth utilities file
+import { getCurrentUser } from "@/server/users";
 
 export default async function HomePage() {
-  // Fetch the current user session server-side
   const user = await getCurrentUser();
 
   return (
     <CalendarProvider>
-      {/* Pass the email to the client-side header */}
       <Header userEmail={user?.email} />
 
-      <div className="max-h-screen bg-background flex flex-col">
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col ">
+      <div className="h-screen bg-background flex flex-col overflow-hidden">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col min-h-0">
           <MonthPickerTab />
-          <div className="w-full flex-1 ">
+          <div className="w-full flex-1 flex flex-col min-h-0">
             <TransactionManager />
           </div>
         </main>
