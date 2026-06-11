@@ -303,20 +303,6 @@ export default function TransactionForm({
           />
         </div>
 
-        {/* Image URL */}
-        <div className="space-y-2">
-          <Label htmlFor="imageUrl">Receipt/Photo URL (Optional)</Label>
-          <Input
-            id="imageUrl"
-            name="imageUrl"
-            type="url"
-            placeholder="https://example.com/receipt.jpg"
-          />
-          <p className="text-xs text-muted-foreground">
-            Add a link to a receipt or photo for this transaction
-          </p>
-        </div>
-
         {/* Error Message */}
         {error && (
           <div className="text-sm text-red-700 bg-red-50 dark:bg-red-950 dark:text-red-300 p-3 rounded-md border border-red-200 dark:border-red-800">

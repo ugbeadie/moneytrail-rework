@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTransactionSummaryByMonth } from "@/lib/actions";
 import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import { useCalendar } from "@/contexts/CalendarContext";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { TransactionSummary } from "@/types/transaction";
 
 interface SummaryCardProps {
@@ -35,13 +35,14 @@ function SummaryCard({
         <CardContent>
           <div className={`text-2xl font-bold ${colorClass}`}>
             {loading ? (
-              <Spinner />
+              <Skeleton className="h-8 w-32" />
             ) : (
               <span className={colorClass}>₦{Math.abs(value).toFixed(2)}</span>
             )}
           </div>
         </CardContent>
       </Card>
+
       {/* Mobile SummaryCard */}
       <Card className="w-full py-2 md:py-3 md:hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
@@ -49,7 +50,7 @@ function SummaryCard({
           <CardContent>
             <div className="flex items-center justify-center h-8 text-lg md:text-2xl font-bold">
               {loading ? (
-                <Spinner />
+                <Skeleton className="h-8 w-24" />
               ) : (
                 <span className={colorClass}>
                   ₦{Math.abs(value).toFixed(2)}
@@ -77,7 +78,6 @@ export function SummaryCards() {
     const fetchSummary = async () => {
       setLoading(true);
       try {
-        // Use the selected year from calendar context
         const data = await getTransactionSummaryByMonth(
           selectedMonthIndex,
           selectedYear,

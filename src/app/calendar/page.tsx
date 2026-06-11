@@ -108,7 +108,7 @@ function CalendarContent() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6">
       <Header />
-      <hr className="border-muted" />
+      {/* <hr className="border-muted" /> */}
       <h1 className="font-bold text-2xl mt-1">Summary</h1>
       <SummaryCards
         key={`summary-${refreshKey}-${selectedMonthIndex}-${selectedYear}`}

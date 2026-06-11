@@ -16,8 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Calendar } from "lucide-react";
-
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Transaction } from "@/types/transaction";
 import { getTransactionsByMonth } from "@/lib/actions";
 import { useCalendar } from "@/contexts/CalendarContext";
@@ -145,7 +144,7 @@ export default function TransactionCalendar({
   }, []);
 
   return (
-    <Card className="h-full flex flex-col mb-10 md:mb-8 border-0 shadow-none bg-transparent py-2 ">
+    <Card className="h-full flex flex-col mb-10 md:mb-8 border-0 shadow-none bg-transparent py-2">
       <CardHeader className="flex-shrink-0">
         <div className="flex items-center justify-center md:justify-end">
           <div className="flex items-center gap-2">
@@ -191,11 +190,25 @@ export default function TransactionCalendar({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-y-auto px-0 ">
+      <CardContent className="flex-1 overflow-y-auto px-0">
         <div ref={containerRef} className="w-full h-full cursor-pointer">
           {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <Spinner />
+            <div className="flex flex-col h-[500px] w-full gap-2 p-2">
+              {/* Day Headers Skeleton */}
+              <div className="grid grid-cols-7 gap-2 mb-2">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <Skeleton key={`header-${i}`} className="h-6 w-full" />
+                ))}
+              </div>
+              {/* Calendar Grid Skeleton */}
+              <div className="grid grid-cols-7 gap-2 flex-1">
+                {Array.from({ length: 35 }).map((_, i) => (
+                  <Skeleton
+                    key={`cell-${i}`}
+                    className="h-full w-full min-h-[60px] rounded-md"
+                  />
+                ))}
+              </div>
             </div>
           ) : (
             <FullCalendar
