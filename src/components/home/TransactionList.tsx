@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { Trash2 } from "lucide-react";
 import type { Transaction } from "@/types/transaction";
 import { getTransactionsByMonth, deleteTransaction } from "@/lib/actions";
-import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { useCalendar } from "@/contexts/CalendarContext";
 import { TransactionGroup } from "./TransactionGroup";
@@ -12,6 +11,49 @@ import { TransactionGroup } from "./TransactionGroup";
 interface TransactionListProps {
   onEdit: (transaction: Transaction) => void;
   onRefresh: () => void;
+}
+
+// Structural Skeleton Loader that mirrors your actual UI rows
+function TransactionListSkeleton() {
+  return (
+    <div className="md:min-h-full flex flex-col space-y-6 animate-pulse">
+      {/* Header Loading State */}
+      <div className="flex-shrink-0 space-y-2">
+        <div className="h-7 w-48 bg-muted rounded-md" />
+        <div className="h-4 w-64 bg-muted/60 rounded-md" />
+      </div>
+
+      {/* List Content Loading State */}
+      <div className="flex-1 overflow-hidden space-y-6">
+        {[1, 2].map((groupIndex) => (
+          <div key={groupIndex} className="space-y-3">
+            {/* Grouped Date Bar Skeleton */}
+            <div className="h-10 w-full bg-muted/40 border-2 border-muted/50 rounded-md" />
+
+            {/* Row Content Skeletons */}
+            {[1, 2, 3].map((itemIndex) => (
+              <div
+                key={itemIndex}
+                className="flex items-center justify-between py-3 px-2 border-b border-muted/30"
+              >
+                <div className="flex items-center gap-3 flex-1">
+                  {/* Plus/Minus Dot */}
+                  <div className="w-6 h-6 rounded-full bg-muted" />
+                  {/* Title & Category Tag */}
+                  <div className="flex flex-col gap-1.5 flex-1 max-w-[220px]">
+                    <div className="h-4 w-full bg-muted rounded" />
+                    <div className="h-3.5 w-16 bg-muted/60 rounded-full" />
+                  </div>
+                </div>
+                {/* Amount Right side */}
+                <div className="h-4 w-16 bg-muted rounded" />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function TransactionList({ onEdit, onRefresh }: TransactionListProps) {
@@ -61,12 +103,9 @@ export function TransactionList({ onEdit, onRefresh }: TransactionListProps) {
     }
   };
 
+  // Swap out the old spinner screen here
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-8 h-[600px]">
-        <Spinner />
-      </div>
-    );
+    return <TransactionListSkeleton />;
   }
 
   if (transactions.length === 0) {
@@ -123,7 +162,7 @@ export function TransactionList({ onEdit, onRefresh }: TransactionListProps) {
           in {selectedMonth}
         </p>
       </div>
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden thin-scrollbar">
         <div className="space-y-0">
           {sortedDates.map((date) => (
             <TransactionGroup

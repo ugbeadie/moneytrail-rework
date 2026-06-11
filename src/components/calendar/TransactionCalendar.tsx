@@ -46,7 +46,7 @@ const formatDateForKey = (date: Date): string => {
 };
 
 const processTransactions = (
-  transactions: Transaction[]
+  transactions: Transaction[],
 ): Record<string, DayData> => {
   const grouped: Record<string, DayData> = {};
 
@@ -191,8 +191,8 @@ export default function TransactionCalendar({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-y-auto px-0">
-        <div ref={containerRef} className="w-full h-full">
+      <CardContent className="flex-1 overflow-y-auto px-0 ">
+        <div ref={containerRef} className="w-full h-full cursor-pointer">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <Spinner />

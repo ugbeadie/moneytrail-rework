@@ -4,7 +4,7 @@ import { ThemeProvider } from "../components/theme-provider";
 import { Toaster } from "sonner";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Header } from "../components/header";
+import { Header } from "../components/shared/header";
 import { CalendarProvider } from "@/contexts/CalendarContext";
 import { StatsProvider } from "@/contexts/StatsContext";
 

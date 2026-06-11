@@ -26,7 +26,7 @@ import { useStats } from "@/contexts/StatsContext";
 import type { Transaction } from "@/types/transaction";
 import TransactionForm from "@/components/calendar/TransactionForm";
 import { format, startOfWeek, endOfWeek } from "date-fns";
-import { Header } from "@/components/header";
+import { Header } from "@/components/shared/header";
 
 const periodOptions = [
   { value: "weekly", label: "Weekly" },

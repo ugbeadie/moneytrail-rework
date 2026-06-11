@@ -217,7 +217,7 @@ export function TransactionForm({
   };
 
   return (
-    <Card className="border-none shadow-none p-4 bg-transparent md:h-[60vh]">
+    <Card className="border-none shadow-none p-4 bg-transparent md:min-h-full">
       <CardHeader className="px-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold">
@@ -241,7 +241,7 @@ export function TransactionForm({
             : "Let's get this on the books!"}
         </p>
       </CardHeader>
-      <CardContent className="px-0 overflow-y-auto scrollbar-hide">
+      <CardContent className="px-0 overflow-y-auto overflow-x-hidden thin-scrollbar">
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           {/* Transaction Type */}
           <div className="flex gap-2">

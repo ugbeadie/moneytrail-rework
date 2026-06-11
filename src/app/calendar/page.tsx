@@ -12,7 +12,7 @@ import { DayPanel } from "@/components/calendar/DayPanel";
 import { deleteTransaction } from "@/lib/actions";
 import { toast } from "sonner";
 import { CalendarProvider, useCalendar } from "@/contexts/CalendarContext";
-import { Header } from "@/components/header";
+import { Header } from "@/components/shared/header";
 
 function CalendarContent() {
   const { selectedMonthIndex, selectedYear } = useCalendar();
