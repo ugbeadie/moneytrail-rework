@@ -5,6 +5,7 @@ import type { CategoryStats } from "@/lib/actions";
 interface CategoryListProps {
   data: CategoryStats[];
   onCategoryClick?: (category: string) => void;
+  total?: number;
 }
 
 const COLORS = [
@@ -20,7 +21,11 @@ const COLORS = [
   "#84cc16", // lime
 ];
 
-export function CategoryList({ data, onCategoryClick }: CategoryListProps) {
+export function CategoryList({
+  data,
+  onCategoryClick,
+  total,
+}: CategoryListProps) {
   return (
     <div className="space-y-3">
       {data.map((item, index) => {

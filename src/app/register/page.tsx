@@ -127,7 +127,7 @@ function RegisterContent() {
             type="submit"
             disabled={pending || googlePending}
             // Added border classes below
-            className="w-full h-11 rounded-xl font-medium hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground border border-gray-200 dark:border-gray-800"
+            className="w-full h-11 rounded-xl font-medium cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2 bg-primary text-primary-foreground border border-gray-200 dark:border-gray-800"
           >
             {pending ? (
               <Loader2 className="animate-spin size-4" />
@@ -149,7 +149,7 @@ function RegisterContent() {
           type="button"
           disabled={pending || googlePending}
           onClick={handleGoogleSignIn}
-          className="w-full h-11 rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-center gap-3 font-medium hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-50 transition-colors"
+          className="w-full h-11 rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-center gap-3 font-medium hover:bg-gray-50 dark:hover:bg-gray-900/50 disabled:opacity-50 transition-colors cursor-pointer"
         >
           {googlePending ? (
             <Loader2 className="animate-spin size-4" />

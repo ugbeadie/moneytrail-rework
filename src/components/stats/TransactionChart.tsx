@@ -9,7 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface StatsChartProps {
   data: CategoryStats[];
   onCategoryClick?: (category: string) => void;
-  loading?: boolean; // Optional prop if you want to explicitly control loading from parent
+  loading?: boolean;
+  type?: "income" | "expense";
 }
 
 const COLORS = [
@@ -57,6 +58,7 @@ export function TransactionChart({
   data,
   onCategoryClick,
   loading,
+  type,
 }: StatsChartProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [containerDimensions, setContainerDimensions] = useState({

@@ -55,24 +55,24 @@ function UserMenu({ email }: { email?: string }) {
       {/* Avatar Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border-2 border-transparent hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+        className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border-2 border-transparent hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
       >
         <User className="w-4 h-4 text-muted-foreground" />
       </button>
 
       {/* Dropdown Modal */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-popover border border-border text-popover-foreground rounded-lg shadow-lg p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute right-0 mt-2 w-56 bg-popover border border-border text-popover-foreground rounded-lg shadow-lg p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200 ">
           <div className="px-2 py-2 text-sm font-medium truncate border-b border-border mb-1">
             {email || "My Account"}
           </div>
 
-          <div className="flex items-center justify-between px-2 py-1.5">
+          {/* <div className="flex items-center justify-between px-2 py-1.5">
             <span className="text-sm text-muted-foreground">Theme</span>
             <ThemeToggle />
-          </div>
+          </div> */}
 
-          <hr className="border-border my-1" />
+          {/* <hr className="border-border my-1" /> */}
 
           <button
             onClick={handleSignOut}
